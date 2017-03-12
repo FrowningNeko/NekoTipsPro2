@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Neko Tips Pro.iml" filepath="$PROJECT_DIR$/Neko Tips Pro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NekoTipsPro2.iml" filepath="$PROJECT_DIR$/NekoTipsPro2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

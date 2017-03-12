@@ -3,32 +3,31 @@
     <string name="action_settings">Settings</string>
     <string name="start">Запустить</string>
     <string name="stop">Остановить</string>
-    <string name="about">Neko Tips Pro v1.3</string>
+    <string name="about">Neko Tips Pro v2</string>
     <string name="ServiceN">Приложение: </string>
     <string name="Setting">Настройки</string>
     <string name="title_activity_tips">Совет дня</string>
     <string name="title_activity_about">О программе</string>
     <string name="title_activity_setting">Настройки</string>
-    <string size = "5" name="about_1">
+    <string name="about_1" size="5">
     Данная программа была разработана исключительно в развлекательных целях. Надеюсь, что эти советы помогут Вам по-другому взглянуть на жизнь и хотя бы немного научат Вас радоваться мелочам. \n
 Огромное спасибо художнику Zanya за предоставленного котика.\n
     </string>
-        <string size = "5" name="about_2">https://vk.com/zanyafc</string>
-        \n\n
-    <string size = "5" name="about_3"> Если Вы хотите как-то помочь приложению, то пожалуйста, оставьте отзыв в Google Play :)\n\n
+    <string name="about_2" size="5">https://vk.com/zanyasha</string>
+    \n\n
+    <string name="about_3" size="5"> Если Вы хотите как-то помочь приложению, то пожалуйста, оставьте отзыв в Google Play :)\n\n
     Хотите поделиться с людьми своим жизненным советом или есть пожелания? Тогда не стесняйтесь писать мне на почту, постараюсь ответить на каждое письмо.</string>
-    <string size = "5" name="about_mail">Angryneko@yandex.ru</string>
+    <string name="about_mail" size="5">Angryneko@yandex.ru</string>
+
+    <string name="setting_text">Добро пожаловать в настройки приложения Neko Tips. Ниже Вы можете выбрать время, через которое я буду напоминать о себе (18–24 часа). \n</string>
 
     <string name="Hello">Добро пожаловать в приложение Neko Tips. Я - кот Неко. Ежедневно я буду давать тебе различные мотивирующие советы. Как и все приличные коты, я работаю тихо и скрытно, поэтому после запуска приложения можешь просто забыть обо мне. Я сам напомню о себе, когда появится новый совет.</string>
-    <string name="title_activity_lurking_neko">О Lurking Neko</string>
-
-    <string name="LurkingNeko1">«При запуске функции Неко устраивает на Вас засаду. Через указанное время он выскочит из засады и…напомнит, что пора сделать перерыв.»
-    </string>
-    <string name="LurkingNeko2">Lurking Neko - это функция, которая через определенное время напомнит, что пора сделать перерыв. Отсчёт происходит только в том случае, если экран телефона включен. При выключении экрана таймер останавливается и ждет, когда экран вновь включится, после чего вновь продолжает отсчёт.</string>
+    <string name="banner_ad_unit_id">ca-app-pub-2759098232123964/8301324533</string>
     <string name="title_activity_time_setting">Настройки времени</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="SettingTime">Настроить время</string>
     <string name="SettingTime_2">Привет, человек! На этой странице ты можешь выбрать, во сколько мне давать тебе новые советы. Просто нажми на кнопочку ниже и выбери удобное для тебя время. </string>
-
+    <string name="appwidget_text">Тут должен был быть совет, но он куда-то пропал. Не переживайте, мотивирующий совет уже объявлен в розыск!</string>
+    <string name="add_widget">Add widget</string>
 </resources>

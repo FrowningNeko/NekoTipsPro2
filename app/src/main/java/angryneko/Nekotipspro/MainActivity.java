@@ -1,79 +1,64 @@
 package angryneko.Nekotipspro;
 
+import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.os.SystemClock;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ImageButton buttonSetting;
-    Button Start, Stop;
-    TextView tvStatus;
-    int REQUEST_CODE = 11223344;
-    public static AlarmManager alarmManager;
+public class MainActivity extends AppCompatActivity{
+
     PendingIntent myPendingIntent;
     Intent intent;
-    public static int yy;
-    public static int mm;
-    public static int dd;
     static int hourOfDay;
     static int minute;
-    public static Calendar calendar;
+    int flag;
+    int firstStart = 0;
+    TextView txTittle;
+    int REQUEST_CODE = 11223344;
+    public static AlarmManager alarmManager;
     public static final String APP_PREFERENCES = "mysettings";
-    public static final String APP_PREFERENCES_LURK2 = "tTime";
     public static final String APP_PREFERENCES_hourOfDay = "hourOfDay";
     public static final String APP_PREFERENCES_minute = "minute";
-    private SharedPreferences mSettings;
-    private SharedPreferences mSett;
-    String ListPreference;
+    public static final String APP_PREFERENCES_FIRST = "first";
+    ImageView imageView;
+    AnimationDrawable anim;
+    SharedPreferences mSettings;
+    public DialogFragment newFragment;
+
+
 
     final int MENU_SETTING_ID = 3;
-    final int MENU_QUIT_ID = 1;
     final int MENU_ABOUT_ID = 2;
     final int MENU_TIPS_ID = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(angryneko.Nekotipspro.R.layout.main);
+        setContentView(R.layout.main);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics metricsB = new DisplayMetrics();
-        display.getMetrics(metricsB);
 
-        if(metricsB.widthPixels < 1024 && metricsB.heightPixels < 600){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
-        buttonSetting = (ImageButton) findViewById(angryneko.Nekotipspro.R.id.imBut);
-        Start = (Button) findViewById(angryneko.Nekotipspro.R.id.buttonStart);
-        Stop = (Button) findViewById(angryneko.Nekotipspro.R.id.buttonStop);
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        mSett = PreferenceManager.getDefaultSharedPreferences(this);
-        tvStatus = (TextView) findViewById(angryneko.Nekotipspro.R.id.textView7);
-
-        Start.setOnClickListener(this);
-        Stop.setOnClickListener(this);
-        buttonSetting.setOnClickListener(this);
+        txTittle = (TextView) findViewById(R.id.textView9);
 
         if (mSettings.contains(APP_PREFERENCES_hourOfDay)) {
             // Получаем число из настроек
@@ -88,18 +73,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
         }
         getSystemService(Activity.ALARM_SERVICE);
-        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE); //Уведомление
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
         intent = new Intent(this, RepeatingAlarmService.class);
-        myPendingIntent = PendingIntent.getBroadcast(this, REQUEST_CODE, intent, 0);
+
+        imageView = (ImageView) findViewById(R.id.imageView);
+        boolean isWorkingAlarm = (PendingIntent.getBroadcast(this, REQUEST_CODE, intent, PendingIntent.FLAG_NO_CREATE) != null);
+
+        if (isWorkingAlarm) //Проверка, включено ли приложение
+        {
+            txTittle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ico1, 0, 0, 0);
+            imageView.setBackgroundResource(R.drawable.animbutton_description_return);
+            flag = 2;
+        }
+        else
+        {
+            txTittle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ico2, 0, 0, 0);
+            imageView.setBackgroundResource(R.drawable.animbutton_description);
+            flag = 1;
+        }
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_TIPS_ID, 0, "Совет дня");
         menu.add(0, MENU_SETTING_ID, 0, "Настройки");
         menu.add(0, MENU_ABOUT_ID, 0, "О программе");
-        menu.add(0, MENU_QUIT_ID, 0, "Выйти");
         return true;
     }
 
@@ -111,12 +112,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                 startActivity(intent);
                 break;
-            case MENU_QUIT_ID:
-                finish();
-                break;
             case MENU_SETTING_ID:
                 Intent intent1 = new Intent(getBaseContext(), SettingActivity.class);
                 startActivity(intent1);
+                break;
             case MENU_TIPS_ID:
                 Intent intent12 = new Intent(getBaseContext(), TipsActivity.class);
                 startActivity(intent12);
@@ -125,80 +124,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case angryneko.Nekotipspro.R.id.buttonStart:
 
-                hourOfDay = mSettings.getInt(APP_PREFERENCES_hourOfDay , 0);
-                minute = mSettings.getInt(APP_PREFERENCES_minute, 0);
-                Calendar myAlarmDate = Calendar.getInstance();
-                calendar = Calendar.getInstance();
-                yy = calendar.get(Calendar.YEAR);
-                mm = calendar.get(Calendar.MONTH);
-                dd = calendar.get(Calendar.DAY_OF_MONTH);
-                myAlarmDate.setTimeInMillis(System.currentTimeMillis());
-                myAlarmDate.set(Calendar.MONTH, mm);
-                myAlarmDate.set(Calendar.YEAR, yy);
-                myAlarmDate.set(Calendar.DAY_OF_MONTH, dd);
-                myAlarmDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                myAlarmDate.set(Calendar.MINUTE, minute);
-                myAlarmDate.set(Calendar.SECOND, 0);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmDate.getTimeInMillis(), myPendingIntent);
-                SharedPreferences.Editor editor = mSettings.edit();
-                editor.putInt(APP_PREFERENCES_hourOfDay, hourOfDay);
-                editor.putInt(APP_PREFERENCES_minute, minute);
-                editor.apply();
-                Toast.makeText(this, "Приложение запущено", Toast.LENGTH_LONG).show();
-                break;
-            case angryneko.Nekotipspro.R.id.buttonStop:
-                if (alarmManager != null) {
-                    alarmManager.cancel(myPendingIntent);
-                    Toast.makeText(this, "Приложение остановлено", Toast.LENGTH_LONG).show();
+
+    public void button(View view) {
+
+        //Изменение кнопки в зависимости от состояния приложения
+        switch (flag){
+            case 1:
+                if (mSettings.contains(APP_PREFERENCES_FIRST)) {
+                    startApp();
+                }
+                else{//Настройка времени при первом запуске
+                    newFragment = new MainActivity.SelectTimeFragment();
+                    newFragment.show(getSupportFragmentManager(), "TimePicker");
+                    firstStart = 1;
+                    SharedPreferences.Editor editor = mSettings.edit();
+                    editor.putInt(APP_PREFERENCES_FIRST, firstStart);
+                    editor.apply();
                 }
                 break;
-            case angryneko.Nekotipspro.R.id.imBut:
-                Intent intent1 = new Intent(getBaseContext(), SettingActivity.class);
-                startActivity(intent1);
+            case 2:
+                if (alarmManager != null) {
+                    myPendingIntent = PendingIntent.getBroadcast(this, REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    alarmManager.cancel(myPendingIntent);
+                    myPendingIntent.cancel();
+                    Toast.makeText(this, "Приложение остановлено", Toast.LENGTH_LONG).show();
+                    txTittle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ico2, 0, 0, 0);
+                    imageView.setBackgroundResource(R.drawable.animbutton_description_return);
+                    flag = 1;
+                    anim = (AnimationDrawable) imageView.getBackground();
+                    anim.setOneShot(true);
+                    anim.stop();
+                    anim.start();
+                }
                 break;
         }
     }
 
-    public void onResume() {
+    public void startApp(){
+        Intent intentService = new Intent(MainActivity.this, ServiceEx.class);
+        startService(intentService);
+        txTittle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ico1, 0, 0, 0);
+        imageView.setBackgroundResource(R.drawable.animbutton_description);
+        flag = 2;
+        anim = (AnimationDrawable) imageView.getBackground();
+        anim.setOneShot(true);
+        anim.stop();
+        anim.start();
+    }
 
-        ListPreference = mSett.getString("listPref", "0");
-        int m = Integer.parseInt(ListPreference);
-        switch (m) {
-            case 1:
-                tvStatus.setTextSize(16);
-                break;
-            case 2:
-                tvStatus.setTextSize(18);
-                break;
-            case 3:
-                tvStatus.setTextSize(20);
-                break;
-            case 4:
-                tvStatus.setTextSize(22);
-                break;
-            case 0:
-                tvStatus.setTextSize(18);
-                break;
+    public void populateSetTime(int hourOfDay, int minute) {
+
+        this.hourOfDay = hourOfDay;
+        this.minute = minute;
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putInt(APP_PREFERENCES_hourOfDay, hourOfDay);
+        editor.putInt(APP_PREFERENCES_minute, minute);
+        editor.apply();
+        startApp();
+    }
+
+    @SuppressLint("ValidFragment")
+    public class SelectTimeFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar calendar = Calendar.getInstance();
+            hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);;
+            minute = calendar.get(Calendar.MINUTE);
+            return new TimePickerDialog(getActivity(), this, hourOfDay, minute, true);
         }
 
-
-        Intent serviceLauncher1 = new Intent(this, LurkingService.class);
-        if (mSett.getBoolean("checkboxLurk", false)) {
-
-            startService(serviceLauncher1);
-        } else {//Останавливаем сервис и убираем из настроек галочку.
-            stopService(serviceLauncher1);
-            SharedPreferences.Editor editor = mSettings.edit();
-            editor.remove(APP_PREFERENCES_LURK2);
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            populateSetTime(hourOfDay, minute);
         }
-
-
-        super.onResume();
     }
 
 

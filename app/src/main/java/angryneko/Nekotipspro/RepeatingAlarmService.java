@@ -1,6 +1,7 @@
 package angryneko.Nekotipspro;
 
 
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,14 +11,15 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 
-public class RepeatingAlarmService extends BroadcastReceiver {
+import xml.TipWidget;
 
-    private static final int NOTIFY_ID = 10;
+public class RepeatingAlarmService extends BroadcastReceiver {
+    private static final int NOTIFY_ID = 101;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
         //Сообщение, которое будет выводиться в уведомлениях
-
         Intent notificationIntent = new Intent(context, TipsActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context,
                 0, notificationIntent,
@@ -27,16 +29,15 @@ public class RepeatingAlarmService extends BroadcastReceiver {
         Notification.Builder builder = new Notification.Builder(context);
 
         builder.setContentIntent(contentIntent)
-                .setSmallIcon(angryneko.Nekotipspro.R.drawable.ico1)
-                        // большая картинка
-                .setLargeIcon(BitmapFactory.decodeResource(res, angryneko.Nekotipspro.R.drawable.ico1))
-                        //.setTicker(res.getString(R.string.warning)) // текст в строке состояния
+                .setSmallIcon(R.drawable.ico1)
+                .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ico1))
+                //.setTicker(res.getString(R.string.warning)) // текст в строке состояния
                 .setTicker("Здравствуй, уделишь мне минутку внимания?")
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
-                        //.setContentTitle(res.getString(R.string.notifytitle)) // Заголовок уведомления
+                //.setContentTitle(res.getString(R.string.notifytitle)) // Заголовок уведомления
                 .setContentTitle("Новый совет!")
-                        //.setContentText(res.getString(R.string.notifytext))
+                //.setContentText(res.getString(R.string.notifytext))
                 .setContentText("У меня появился для тебя новый совет"); // Текст уведомления
 
         Notification notification = builder.getNotification(); // до API 16
@@ -45,10 +46,10 @@ public class RepeatingAlarmService extends BroadcastReceiver {
         NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFY_ID, notification);
-
         Intent intent12 = new Intent(context, Tips.class);
         context.startService(intent12);
-        Intent intent1 = new Intent(context, ServiceEx.class);
+        int i = 1;
+        Intent intent1 = new Intent(context, ServiceEx.class).putExtra("inspec", i);
         context.startService(intent1);
     }
 

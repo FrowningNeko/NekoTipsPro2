@@ -5,10 +5,10 @@
         <!-- Customize your theme here. -->
     </style>
     <style name="vtText">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/textSize</item>
     </style>
     <style name="vtTittle">
-        <item name="android:textSize">25sp</item>
+        <item name="android:textSize">@dimen/textSizeTittle</item>
     </style>
 
 </resources>

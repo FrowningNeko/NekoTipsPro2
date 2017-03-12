@@ -14,10 +14,8 @@ import java.util.Calendar;
 
 public class ServiceEx extends Service {
 
-
     int REQUEST_CODE = 11223344;
     static AlarmManager alarmManager;
-    public static long meow;
     static int hourOfDay;
     static int minute;
     public static final String APP_PREFERENCES = "mysettings";
@@ -30,21 +28,11 @@ public class ServiceEx extends Service {
     private SharedPreferences mSettings;
     PendingIntent myPendingIntent;
     Intent intent;
+    int inspec = 0;
+
     @Override
     public void onCreate() {
         super.onCreate();
-
-
-        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (mSettings.contains(APP_PREFERENCES_hourOfDay)) {
-            // Получаем число из настроек
-            hourOfDay = mSettings.getInt(APP_PREFERENCES_hourOfDay , 0);
-            minute = mSettings.getInt(APP_PREFERENCES_minute, 0);
-        }
-        intent = new Intent(this, RepeatingAlarmService.class);
-        myPendingIntent = PendingIntent.getBroadcast(this, REQUEST_CODE, intent, 0);
-        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE); //Уведомление
-        startService();
 
 
     }
@@ -52,23 +40,43 @@ public class ServiceEx extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
+
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
 
-    private void startService() {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        inspec = intent.getIntExtra("inspec", 0);
 
-        hourOfDay = mSettings.getInt(APP_PREFERENCES_hourOfDay , 0);
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(APP_PREFERENCES_hourOfDay)) {
+            hourOfDay = mSettings.getInt(APP_PREFERENCES_hourOfDay, 0);
+            minute = mSettings.getInt(APP_PREFERENCES_minute, 0);
+        }
+
+
+        myService();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void myService() {
+        intent = new Intent(this, RepeatingAlarmService.class);
+        myPendingIntent = PendingIntent.getBroadcast(this, REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        hourOfDay = mSettings.getInt(APP_PREFERENCES_hourOfDay, 0);
         minute = mSettings.getInt(APP_PREFERENCES_minute, 0);
         Calendar myAlarmDate = Calendar.getInstance();
         calendar = Calendar.getInstance();
         yy = calendar.get(Calendar.YEAR);
         mm = calendar.get(Calendar.MONTH);
-        dd = calendar.get(Calendar.DAY_OF_MONTH)+1;
+        dd = calendar.get(Calendar.DAY_OF_MONTH);
         myAlarmDate.setTimeInMillis(System.currentTimeMillis());
         myAlarmDate.set(Calendar.MONTH, mm);
         myAlarmDate.set(Calendar.YEAR, yy);
+
+        if (inspec == 1) {
+            dd = dd + 1;
+        }
         myAlarmDate.set(Calendar.DAY_OF_MONTH, dd);
         myAlarmDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
         myAlarmDate.set(Calendar.MINUTE, minute);
@@ -81,7 +89,4 @@ public class ServiceEx extends Service {
         Toast.makeText(this, "Приложение Neko Tips запущенно", Toast.LENGTH_LONG).show();
         stopSelf();
     }
-
 }
-
-

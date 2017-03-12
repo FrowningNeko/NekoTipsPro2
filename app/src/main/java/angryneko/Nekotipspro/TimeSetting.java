@@ -6,19 +6,25 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
 public class TimeSetting extends FragmentActivity {
+
+    //Активити для настройки времени срабатывания AlarmManager
     TextView tvTime;
     static int hourOfDay;
     static int minute;
@@ -48,6 +54,8 @@ public class TimeSetting extends FragmentActivity {
             editor.apply();
             tvTime.setText(hourOfDay + ":" + minute);
         }
+        button1 = (Button)findViewById(R.id.butTime);
+
 
     }
     public void selectTime(View view) {
